@@ -10,3 +10,6 @@ def welcome_message():
 def json_message():
     return jsonify(message={"status":"ok"})
 
+@fxdxp.route("/health")
+def health_check():
+    return {"status": "ok"}, 200
