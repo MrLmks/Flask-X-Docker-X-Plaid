@@ -1,0 +1,16 @@
+services:
+  fxdxp-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    container_name: fxdxp-app
+
+    ports:
+      - "5001:5000"
+    
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
