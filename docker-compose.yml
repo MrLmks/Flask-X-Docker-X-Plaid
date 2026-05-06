@@ -5,10 +5,12 @@ services:
     restart: always
     networks:
       - private_net
+    secrets:
+      - db_user
+      - db_password
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: fxdxp-db
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER_FILE: /run/secrets/db_user
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -57,3 +59,9 @@ networks:
 
 volumes:
   db_data:
+
+secrets:
+  db_user:
+    file: ./secrets/db_user
+  db_password:
+    file: ./secrets/db_password
