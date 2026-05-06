@@ -1,50 +1,49 @@
 services:
   db:
     image: postgres:17-alpine
-    
     container_name: fxdxp-db
-    
     restart: always
-
     networks:
       - private_net
-    
     environment:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: test
       POSTGRES_DB: fxdxp-db
-
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dev", "-d", "fxdxp-db"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   fxdxp-app:
     build:
       context: .
-      
       dockerfile: Dockerfile
-    
     container_name: fxdxp-app
-
     networks:
       - private_net
       - public_net
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      retries: 3
+      timeout: 5s
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   nginx:
     image: nginx:alpine
-    
     ports:
       - "80:80"
       - "443:443"
-    
     networks:
       - public_net
-    
     depends_on:
-      - fxdxp-app
-    
+      fxdxp-app:
+        condition: service_healthy
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
@@ -55,12 +54,6 @@ networks:
   private_net:
     driver: bridge
     internal: true
-
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
-  interval: 10s
-  retries: 3
-  timeout: 5s
 
 volumes:
   db_data:
