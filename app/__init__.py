@@ -27,7 +27,7 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-    from app.models import Transaction
+    from app.models import Transaction, Token
 
     with app.app_context():
         db.create_all()

@@ -14,3 +14,15 @@ class Transaction(db.Model):
 
     def __repr__(self):
         return f"<Transaction {self.transaction_id} - {self.amount} {self.currency}>"
+    
+class Token(db.Model):
+    __tablename__ = "tokens"
+
+    id = db.Column(db.Integer, primary_key=True)
+    # Doesn't need to be unique as user with mutiple accounts will share the same ID
+    client_user_id = db.Column(db.String(255), nullable=False)
+    creation_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    access_token = db.Column(db.String(255), unique=True, nullable=False)
+    
+    def __repr__(self):
+        return f"<Token {self.client_user_id}>"
