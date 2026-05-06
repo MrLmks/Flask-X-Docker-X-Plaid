@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify
+import requests
+from flask import Blueprint, jsonify, request
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
 
