@@ -11,10 +11,11 @@ services:
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_DB: fxdxp_db
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "dev", "-d", "fxdxp-db"]
+      test: ["CMD", "sh", "-c", "pg_isready -U $$(cat /run/secrets/db_user) -d fxdxp_db"]
       interval: 10s
       retries: 5
       timeout: 5s
