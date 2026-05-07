@@ -19,7 +19,8 @@ class Token(db.Model):
     __tablename__ = "tokens"
 
     id = db.Column(db.Integer, primary_key=True)
-    # Doesn't need to be unique as user with mutiple accounts will share the same ID
+    item_id = db.Column(db.String(255), nullable=False)
+    # Doesn't need to be unique as user with mutiple bank accounts will share the same ID
     client_user_id = db.Column(db.String(255), nullable=False)
     creation_date = db.Column(db.DateTime, default=db.func.current_timestamp())
     access_token = db.Column(db.String(255), unique=True, nullable=False)

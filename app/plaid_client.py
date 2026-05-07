@@ -7,7 +7,6 @@ PLAID_ENV = os.getenv("PLAID_ENV", "sandbox")
 
 environments = {
     "sandbox": plaid.Environment.Sandbox,
-    "development": plaid.Environment.Development,
     "production": plaid.Environment.Production
 }
 

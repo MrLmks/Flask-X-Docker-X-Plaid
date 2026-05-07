@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from .routes import fxdxp
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 
@@ -33,5 +32,7 @@ def create_app():
         db.create_all()
 
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+    
+    from .routes import fxdxp
     app.register_blueprint(fxdxp)
     return app
