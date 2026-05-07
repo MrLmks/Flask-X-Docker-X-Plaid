@@ -80,13 +80,14 @@ def dashboard():
 
 @fxdxp.route("/api/fetch_transaction", methods=["GET"])
 def fetch_transaction():
-    from app.models import Token
+    from app.models import Token, Transaction
+    from app import db
     token_obj = Token.query.filter_by(client_user_id="sandbox-user").first()
     if token_obj is  None:
         return jsonify({"status": "Error : token_obj is NULL"})
     transaction_params = {
         "access_token": token_obj.access_token,
-        "start_date": date.today().isoformat(),
+        "start_date": "2020-01-01", # To see the transaction logs
         "end_date": date.today().isoformat()
     }
 
@@ -94,6 +95,12 @@ def fetch_transaction():
     transactions = response["transactions"]
 
     for transaction in transactions:
-        print(transaction)
+        existing_transaction = Transaction.query.filter_by(transaction_id=transaction["transaction_id"]).first()
+        if existing_transaction is None:
+            transaction_obj = Transaction(transaction_id=transaction.get("transaction_id", "Unknown"), amount=transaction["amount"], 
+                                        date=transaction["date"], billing_entity=(transaction.get("merchant_name") or "Unknown"), 
+                                        category=(transaction.get("category") or ["Uncategorized"][0]), currency=transaction["iso_currency_code"])
+            db.session.add(transaction_obj)
+    db.session.commit()
     
-    return jsonify({"status": "success"}), 201
+    return jsonify({"status": "success", "count": len(transactions)}), 201

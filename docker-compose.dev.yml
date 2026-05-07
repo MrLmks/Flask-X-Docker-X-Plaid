@@ -1,16 +1,66 @@
 services:
+  db:
+    image: postgres:17-alpine
+    container_name: fxdxp-db
+    restart: always
+    networks:
+      - private_net
+    secrets:
+      - db_user
+      - db_password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_DB: fxdxp_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "sh", "-c", "pg_isready -U $$(cat /run/secrets/db_user) -d fxdxp_db"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    
   fxdxp-app:
     build:
       context: .
       dockerfile: Dockerfile.dev
-
     container_name: fxdxp-app
-
     ports:
-      - "5001:5000"
-    
-    volumes:
-      - .:/app
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_ENV=development
+      - 5001:5000
+    networks:
+      - private_net
+      - public_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      retries: 3
+      timeout: 5s
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+        - action: rebuild
+          path: requirements.txt
+  
+networks:
+  public_net:
+    driver: bridge
+
+  private_net:
+    driver: bridge
+    internal: true
+
+volumes:
+  db_data:
+
+secrets:
+  db_user:
+    file: ./secrets/db_user
+  db_password:
+    file: ./secrets/db_password

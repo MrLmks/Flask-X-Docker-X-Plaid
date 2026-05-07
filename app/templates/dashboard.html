@@ -10,7 +10,7 @@
     <button id="connect-bank">Clique ici pour connecter ta banque</button>
     <script>
         document.getElementById('connect-bank').addEventListener('click', async (event) => {
-        const url = "http://localhost/api/create_link_token"
+        const url = "http://localhost:5001/api/create_link_token"
         try {
             const response = await fetch(url, 
                 {
@@ -28,7 +28,7 @@
             {
                 token: result.link_token,
                 onSuccess: async (public_token, metadata) => {
-                const url = "http://localhost/api/exchange_public_token"
+                const url = "http://localhost:5001/api/exchange_public_token"
                 try {
                     const response = await fetch (url, {
                         method: "POST",
