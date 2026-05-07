@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from app.plaid_client import client
 
 
@@ -60,9 +60,8 @@ def exchange_public_token():
         return jsonify({"error": "Public token not found"}), 400
     
     try:
-        response = client.item_public_token_exchange(public_token)
+        response = client.item_public_token_exchange({"public_token": public_token})
         client_user_id = data.get("client_user_id", "sandbox-user")
-        # Against circular import
         from app.models import Token
         from app import db
         token_obj = Token(access_token=response["access_token"], item_id=response["item_id"], client_user_id=client_user_id)
@@ -73,3 +72,7 @@ def exchange_public_token():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@fxdxp.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")

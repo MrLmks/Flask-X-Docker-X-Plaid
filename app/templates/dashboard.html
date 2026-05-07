@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask × Docker × Plaid</title>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+</head>
+<body>
+    <h1>Welcome to FXDXP 💳</h1>
+    <button id="connect-bank">Clique ici pour connecter ta banque</button>
+    <script>
+        document.getElementById('connect-bank').addEventListener('click', async (event) => {
+        const url = "http://localhost/api/create_link_token"
+        try {
+            const response = await fetch(url, 
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify( {client_user_id: "sandbox-user"} )
+                });
+                if (!response.ok){
+                    throw new Error(`Status: ${response.status}`);
+                }
+            const result = await response.json();
+            const handler = Plaid.create(
+            {
+                token: result.link_token,
+                onSuccess: async (public_token, metadata) => {
+                const url = "http://localhost/api/exchange_public_token"
+                try {
+                    const response = await fetch (url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify( {public_token: public_token} )
+                    });
+                } catch (error) {
+                    console.error(`Error: ${error}`);
+                    }
+                }
+            }
+        )
+        handler.open()
+        } catch (error) {
+            console.error("Error during fetch");
+        }
+    });
+    </script>
+</body>
+</html>
