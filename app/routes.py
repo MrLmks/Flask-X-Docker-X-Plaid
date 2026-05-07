@@ -1,6 +1,7 @@
 import json
 from flask import Blueprint, jsonify, request, render_template
 from app.plaid_client import client
+from datetime import date
 
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
@@ -76,3 +77,23 @@ def exchange_public_token():
 @fxdxp.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
+
+@fxdxp.route("/api/fetch_transaction", methods=["GET"])
+def fetch_transaction():
+    from app.models import Token
+    token_obj = Token.query.filter_by(client_user_id="sandbox-user").first()
+    if token_obj is  None:
+        return jsonify({"status": "Error : token_obj is NULL"})
+    transaction_params = {
+        "access_token": token_obj.access_token,
+        "start_date": date.today().isoformat(),
+        "end_date": date.today().isoformat()
+    }
+
+    response = client.transactions_get(transaction_params)
+    transactions = response["transactions"]
+
+    for transaction in transactions:
+        print(transaction)
+    
+    return jsonify({"status": "success"}), 201
