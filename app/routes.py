@@ -78,9 +78,9 @@ def exchange_public_token():
 @fxdxp.route("/dashboard")
 def dashboard():
     from app.models import Transaction
-    transactions = Transaction.query.all()
     from app import db
-    
+    transactions = Transaction.query.all()
+
     query = (
         select(
             Transaction.category,
@@ -106,7 +106,6 @@ def fetch_transaction():
         "start_date": "2020-01-01", # To see the history of transaction logs in sandbox mode
         "end_date": date.today().isoformat()
     }
-
     response = client.transactions_get(transaction_params)
     transactions = response["transactions"]
 
@@ -118,5 +117,19 @@ def fetch_transaction():
                                         category=(transaction.get("category") or ["Uncategorized"][0]), currency=transaction["iso_currency_code"])
             db.session.add(transaction_obj)
     db.session.commit()
-    
     return jsonify({"status": "success", "count": len(transactions)}), 201
+
+
+@fxdxp.route("/balance", methods=["GET"])
+def show_balance():
+    from app.models import Transaction
+    from app import db
+
+    query = {
+        select(
+            Transaction.billing_entity,
+            func.sum(Transaction.amount).label("spent-at")
+        ).group_by(Transaction.billing_entity)
+    }
+
+    results = db.session.execute(query).all()

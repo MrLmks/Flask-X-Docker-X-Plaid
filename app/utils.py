@@ -1,0 +1,1 @@
+# Here we will add the logos mapping to display the transaction's logos under the balance.

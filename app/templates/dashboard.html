@@ -8,28 +8,4 @@
 <div id="data_graph" data-category='{{ category | tojson }}' data-amount='{{ amount | tojson }}'></div>
 <script src="{{ url_for('static', filename='/js/plaid-connect.js') }}"></script>
 <script src="{{ url_for('static', filename='js/dashboard-graph.js') }}"></script>
-    <table>
-    <thead> 
-        <tr>
-            <th> Transaction ID </th>
-            <th> Amount </th>
-            <th> Date</th>
-            <th> Billing Entity </th>
-            <th> Category </th>
-            <th> Currency </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for transaction in transactions %}
-        <tr>
-                <td>{{ transaction.transaction_id }}</td>
-                <td>{{ transaction.amount }}</td>
-                <td>{{ transaction.date }}</td>
-                <td>{{ transaction.billing_entity }}</td>
-                <td>{{ transaction.category }}</td>
-                <td>{{ transaction.currency }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 {% endblock %}
