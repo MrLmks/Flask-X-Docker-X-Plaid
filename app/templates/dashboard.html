@@ -4,10 +4,50 @@
     <meta charset="UTF-8">
     <title>Flask × Docker × Plaid</title>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div style="width: 400px; height: 400px;">
+        <canvas id="graph"></canvas>
+    </div>
     <h1>Welcome to FXDXP 💳</h1>
     <button id="connect-bank">Clique ici pour connecter ta banque</button>
+    <script>
+        const categories = {{ category | tojson }};
+        const amounts = {{ amount | tojson }};
+        
+        const context = document.getElementById("graph").getContext("2d")
+
+        const pie_chart = new Chart(context, {
+            type: "pie",
+            data: {
+                labels: categories,
+                datasets: [{
+                    data: amounts,
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#9966FF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                    },
+                    title: {
+                        display: true,
+                        text: "Spendings"
+                    }
+                }
+            }
+        })
+    </script>
     <script>
         document.getElementById('connect-bank').addEventListener('click', async (event) => {
         const url = "http://localhost:5001/api/create_link_token"
@@ -49,5 +89,29 @@
         }
     });
     </script>
+        <table>
+        <thead> 
+            <tr>
+                <th> Transaction ID </th>
+                <th> Amount </th>
+                <th> Date</th>
+                <th> Billing Entity </th>
+                <th> Category </th>
+                <th> Currency </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                    <td>{{ transaction.transaction_id }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.billing_entity }}</td>
+                    <td>{{ transaction.category }}</td>
+                    <td>{{ transaction.currency }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

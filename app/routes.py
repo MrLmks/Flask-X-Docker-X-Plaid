@@ -2,6 +2,7 @@ import json
 from flask import Blueprint, jsonify, request, render_template
 from app.plaid_client import client
 from datetime import date
+from sqlalchemy import func, select
 
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
@@ -76,7 +77,33 @@ def exchange_public_token():
 
 @fxdxp.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    from app.models import Transaction
+
+    transactions = Transaction.query.all()
+
+    all_transaction_objs = {
+        "transaction_ids": [t.transaction_id for t in transactions],
+        "amounts": [t.amount for t in transactions],
+        "dates": [t.date for t in transactions],
+        "billing_entities": [t.billing_entity for t in transactions],
+        "categories": [t.category for t in transactions],
+        "currencies": [t.currency for t in transactions]
+    }
+    from app import db
+    
+    query = (
+        select(
+            Transaction.category,
+            func.sum(Transaction.amount).label("total_spent")
+        ).group_by(Transaction.category)
+    )
+    results = db.session.execute(query).all()
+
+    unpacked_categories = [c[0] for c in results]
+    unpacked_amounts = [a[1] for a in results]
+
+    return render_template("dashboard.html", transactions=transactions, category=unpacked_categories, amount=unpacked_amounts)
+
 
 @fxdxp.route("/api/fetch_transaction", methods=["GET"])
 def fetch_transaction():
@@ -87,7 +114,7 @@ def fetch_transaction():
         return jsonify({"status": "Error : token_obj is NULL"})
     transaction_params = {
         "access_token": token_obj.access_token,
-        "start_date": "2020-01-01", # To see the transaction logs
+        "start_date": "2020-01-01", # To see the history of transaction logs in sandbox mode
         "end_date": date.today().isoformat()
     }
 
