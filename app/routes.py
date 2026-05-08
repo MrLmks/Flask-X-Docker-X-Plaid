@@ -78,17 +78,7 @@ def exchange_public_token():
 @fxdxp.route("/dashboard")
 def dashboard():
     from app.models import Transaction
-
     transactions = Transaction.query.all()
-
-    all_transaction_objs = {
-        "transaction_ids": [t.transaction_id for t in transactions],
-        "amounts": [t.amount for t in transactions],
-        "dates": [t.date for t in transactions],
-        "billing_entities": [t.billing_entity for t in transactions],
-        "categories": [t.category for t in transactions],
-        "currencies": [t.currency for t in transactions]
-    }
     from app import db
     
     query = (
@@ -101,7 +91,6 @@ def dashboard():
 
     unpacked_categories = [c[0] for c in results]
     unpacked_amounts = [a[1] for a in results]
-
     return render_template("dashboard.html", transactions=transactions, category=unpacked_categories, amount=unpacked_amounts)
 
 

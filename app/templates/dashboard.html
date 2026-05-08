@@ -1,117 +1,35 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Flask × Docker × Plaid</title>
-    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <div style="width: 400px; height: 400px;">
-        <canvas id="graph"></canvas>
-    </div>
-    <h1>Welcome to FXDXP 💳</h1>
-    <button id="connect-bank">Clique ici pour connecter ta banque</button>
-    <script>
-        const categories = {{ category | tojson }};
-        const amounts = {{ amount | tojson }};
-        
-        const context = document.getElementById("graph").getContext("2d")
+{% extends "base.html" %}
 
-        const pie_chart = new Chart(context, {
-            type: "pie",
-            data: {
-                labels: categories,
-                datasets: [{
-                    data: amounts,
-                    backgroundColor: [
-                        '#FF6384',
-                        '#36A2EB',
-                        '#FFCE56',
-                        '#4BC0C0',
-                        '#9966FF'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                    },
-                    title: {
-                        display: true,
-                        text: "Spendings"
-                    }
-                }
-            }
-        })
-    </script>
-    <script>
-        document.getElementById('connect-bank').addEventListener('click', async (event) => {
-        const url = "http://localhost:5001/api/create_link_token"
-        try {
-            const response = await fetch(url, 
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify( {client_user_id: "sandbox-user"} )
-                });
-                if (!response.ok){
-                    throw new Error(`Status: ${response.status}`);
-                }
-            const result = await response.json();
-            const handler = Plaid.create(
-            {
-                token: result.link_token,
-                onSuccess: async (public_token, metadata) => {
-                const url = "http://localhost:5001/api/exchange_public_token"
-                try {
-                    const response = await fetch (url, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify( {public_token: public_token} )
-                    });
-                } catch (error) {
-                    console.error(`Error: ${error}`);
-                    }
-                }
-            }
-        )
-        handler.open();
-        } catch (error) {
-            console.error("Error during fetch");
-        }
-    });
-    </script>
-        <table>
-        <thead> 
-            <tr>
-                <th> Transaction ID </th>
-                <th> Amount </th>
-                <th> Date</th>
-                <th> Billing Entity </th>
-                <th> Category </th>
-                <th> Currency </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-            <tr>
-                    <td>{{ transaction.transaction_id }}</td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.date }}</td>
-                    <td>{{ transaction.billing_entity }}</td>
-                    <td>{{ transaction.category }}</td>
-                    <td>{{ transaction.currency }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% block content %}
+<div style="width: 600px; height: 600px;">
+    <canvas id="graph"></canvas>
+</div>
+<button id="connect-bank">Connect To Your Bank</button>
+<div id="data_graph" data-category='{{ category | tojson }}' data-amount='{{ amount | tojson }}'></div>
+<script src="{{ url_for('static', filename='/js/plaid-connect.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard-graph.js') }}"></script>
+    <table>
+    <thead> 
+        <tr>
+            <th> Transaction ID </th>
+            <th> Amount </th>
+            <th> Date</th>
+            <th> Billing Entity </th>
+            <th> Category </th>
+            <th> Currency </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+        <tr>
+                <td>{{ transaction.transaction_id }}</td>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.billing_entity }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ transaction.currency }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

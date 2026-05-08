@@ -10,7 +10,6 @@ environments = {
     "production": plaid.Environment.Production
 }
 
-
 host = environments.get(PLAID_ENV, plaid.Environment.Sandbox)
 
 configuration = plaid.Configuration(
