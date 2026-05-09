@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, render_template
 from app.plaid_client import client
 from datetime import date
 from sqlalchemy import func, select
-from utils import mapping_logos
+from .utils import mapping_logos
 
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
