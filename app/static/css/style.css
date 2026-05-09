@@ -4,12 +4,17 @@ img {
     height: auto
 }
 
+h1 {
+    text-align: center;
+}
+
 .balance-container {
     display: block;
     font-size: 14px;
     text-transform: uppercase;
     color: #7f8c8d;
     margin-bottom: 5px;
+    text-align: center;
 }
 
 .transaction-card {
@@ -19,6 +24,5 @@ img {
     padding: 20px;
     margin-bottom: 16px;
     border: 1px solid #f0f0f0;
-    display: flex;
     align-items: center;
 }
