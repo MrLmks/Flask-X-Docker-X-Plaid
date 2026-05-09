@@ -3,16 +3,15 @@
 {% block content %}
 
 <h1> Balance : </h1>
-<div>
-    {{% for t in transactions %}}
+<div class="blanace-container">
+    {{ total }}
 </div>
-<div>
-    <img src="{{ url_for=('static', filename=logo[t.billing_entity]) }}" >
+<div class="transaction-card">
+    {% for t in transactions %}
+    <img src="{{ url_for('static', filename=logo[t.billing_entity]) }}" >
+    {{ t.billing_entity }}
+    {{ t.amount }}
+    {{ t.date }}
+    {% endfor %}
 </div>
-<div>
-    {{% t.billing_entity %}}
-    {{% t.amount %}}
-    {{% t.date %}}
-</div>
-
 {% endblock %}

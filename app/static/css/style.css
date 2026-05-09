@@ -1,0 +1,24 @@
+img {
+    max-width: 32px;
+    max-height: 32px;
+    height: auto
+}
+
+.balance-container {
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+.transaction-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+}
