@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request, render_template
 from app.plaid_client import client
 from datetime import date
 from sqlalchemy import func, select
+from utils import mapping_logos
 
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
@@ -124,12 +125,18 @@ def fetch_transaction():
 def show_balance():
     from app.models import Transaction
     from app import db
-
-    query = {
+    query = (
         select(
             Transaction.billing_entity,
             func.sum(Transaction.amount).label("spent-at")
         ).group_by(Transaction.billing_entity)
-    }
-
+    )
     results = db.session.execute(query).all()
+    transactions_sum = sum(t[1] for t in results)
+    transactions = Transaction.query.all()
+    logo = {}
+
+    for t in transactions:
+        logo[t.billing_entity] = mapping_logos(t.billing_entity)
+
+    return render_template("balance.html", total=transactions_sum, logo=logo, transactions=transactions)
