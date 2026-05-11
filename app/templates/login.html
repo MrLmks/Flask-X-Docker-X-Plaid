@@ -19,7 +19,10 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
     </div>
-    <a href="{{ url_for('#') }}">Forgot Password ?</a>
+    <a href="#">Forgot Password ?</a>
+    <div>
+      <a href="{{ url_for('FXDXP.register') }}">Register</a>
+    </div>
     <button type="submit">Send</button>
 </form>
 {% endblock %}

@@ -197,4 +197,4 @@ def register():
         db.session.add(user_obj)
         db.session.commit()
         
-    return redirect(url_for("FXDXP.register"))
+    return render_template("register.html")

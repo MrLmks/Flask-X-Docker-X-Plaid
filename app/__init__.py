@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -21,9 +22,11 @@ def get_credentials():
 def create_app():
     username, password = get_credentials()
     DATABASE_URL = f"postgresql+psycopg2://{username}:{password}@db:5432/fxdxp_db"
+
     app=Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
     db.init_app(app)
 
     from app.models import Transaction, Token
