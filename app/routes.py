@@ -1,5 +1,5 @@
 import json, re
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, flash
 from app.plaid_client import client
 from datetime import date
 from sqlalchemy import func, select
@@ -145,24 +145,56 @@ def show_balance():
 
 @fxdxp.route("/login", methods=["GET", "POST"])
 def login():
-    pass
+    if "user_id" in session:
+        return redirect(url_for("FXDXP.dashboard"))
+    
+    from app.models import User
+    from app import db
+    
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        request_username = User.query.filter_by(username=username).first()
+        
+        if request_username is None:
+            flash("Username or password incorrect.", "error")
+            return redirect(url_for("FXDXP.login"))
+       
+        if check_password_hash(request_username.password_hash, password):
+            session["user_id"] = request_username.id
+            return redirect(url_for("FXDXP.dashboard"))
+        
+        flash("Username or password incorrect.", "error")
+        return redirect(url_for("FXDXP.login"))
+    
+    return render_template("login.html")
 
 
 @fxdxp.route("/register", methods=["GET", "POST"])
 def register():
+    if "user_id" in session:
+        return redirect(url_for("FXDXP.dashboard"))
+    
     from app.models import User
     from app import db
+    
     if request.method == "POST":
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        email = request.form.get("email")
+        email = request.form.get("email").strip()
+        
         if re.match(pattern, email) is None:
             return jsonify({"Status" : "Error with the email. Try again."})
-        username = request.form.get("username")
+        
+        username = request.form.get("username").strip()
+        
         if username is None:
             return jsonify({"status": "Error with the username. Try again."})
-        password = request.form.get("password")
+        
+        password = request.form.get("password").strip()
         hashed_password = generate_password_hash(password)
         user_obj = User(username=username, password=hashed_password, email= email)
+        
         db.session.add(user_obj)
         db.session.commit()
-        return redirect(url_for("FXDXP.login"))
+        
+    return redirect(url_for("FXDXP.register"))
