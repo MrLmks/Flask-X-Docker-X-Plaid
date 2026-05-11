@@ -4,9 +4,19 @@ img {
     height: auto
 }
 
+
 h1 {
     text-align: center;
+    text-decoration: underline;
 }
+
+
+.total-container {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+}
+
 
 .balance-container {
     display: block;
@@ -17,12 +27,15 @@ h1 {
     text-align: center;
 }
 
+
 .transaction-card {
-    background-color: #ffffff;
+    background-color: rgb(179, 181, 184);
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
     padding: 20px;
     margin-bottom: 16px;
     border: 1px solid #f0f0f0;
     align-items: center;
+    display: flex;
+    justify-content: space-between;
 }

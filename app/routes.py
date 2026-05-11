@@ -1,9 +1,10 @@
-import json
-from flask import Blueprint, jsonify, request, render_template
+import json, re
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for
 from app.plaid_client import client
 from datetime import date
 from sqlalchemy import func, select
 from .utils import mapping_logos
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
@@ -140,3 +141,28 @@ def show_balance():
         logo[t.billing_entity] = mapping_logos(t.billing_entity)
 
     return render_template("balance.html", total=transactions_sum, logo=logo, transactions=transactions)
+
+
+@fxdxp.route("/login", methods=["GET", "POST"])
+def login():
+    pass
+
+
+@fxdxp.route("/register", methods=["GET", "POST"])
+def register():
+    from app.models import User
+    from app import db
+    if request.method == "POST":
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        email = request.form.get("email")
+        if re.match(pattern, email) is None:
+            return jsonify({"Status" : "Error with the email. Try again."})
+        username = request.form.get("username")
+        if username is None:
+            return jsonify({"status": "Error with the username. Try again."})
+        password = request.form.get("password")
+        hashed_password = generate_password_hash(password)
+        user_obj = User(username=username, password=hashed_password, email= email)
+        db.session.add(user_obj)
+        db.session.commit()
+        return redirect(url_for("FXDXP.login"))

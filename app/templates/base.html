@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav> Dashboard </nav>
-    <nav> Analitics </nav>
-    <nav> My Profile </nav>
+    <ul class="nav-bar">
+        <a href="{{ url_for('FXDXP.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('FXDXP.show_balance') }}">Balance</a>
+        <a>My Profile</a>
+    </ul>
     {% block content %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,16 @@
+{% extends "base.html"}
+
+{% block content %}
+<form action="{{ url_for('FXDXP.login') }}" method="POST">
+    <div class="username">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div class="password">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <a href="{{ url_for('#') }}">Forgot Password ?</a>
+    <button type="submit">Send</button>
+</form>
+{% endblock %}
