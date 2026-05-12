@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 from .utils import mapping_logos
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import login_manager
-from flask_login import login_required
+from flask_login import login_required, login_user
 from app.models import User
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
@@ -17,7 +17,7 @@ def load_user(user_id):
 
 @fxdxp.route("/")
 def welcome_message():
-    return "Welcome to FXDXP 💳"
+    return "Welcome to FXDXP"
 
 @fxdxp.route("/about", methods=["GET"])
 def json_message():
@@ -151,10 +151,7 @@ def show_balance():
 
 
 @fxdxp.route("/login", methods=["GET", "POST"])
-def login():
-    if "user_id" in session:
-        return redirect(url_for("FXDXP.dashboard"))
-    
+def login():    
     from app.models import User
     from app import db
     
@@ -169,19 +166,14 @@ def login():
        
         if check_password_hash(request_username.password_hash, password):
             session["user_id"] = request_username.id
+            login_user(request_username)
             return redirect(url_for("FXDXP.dashboard"))
         
-        flash("Username or password incorrect.", "error")
-        return redirect(url_for("FXDXP.login"))
-    
-    return render_template("login.html")
+    return render_template("login.html", hide_navbar=True)
 
 
 @fxdxp.route("/register", methods=["GET", "POST"])
 def register():
-    if "user_id" in session:
-        return redirect(url_for("FXDXP.dashboard"))
-    
     from app.models import User
     from app import db
     
@@ -208,12 +200,12 @@ def register():
             flash("Error with the username. Retry", "error")
             return redirect(url_for("FXDXP.register"))
         
-
         password = request.form.get("password").strip()
         hashed_password = generate_password_hash(password)
         user_obj = User(username=username, password_hash=hashed_password, email= email)
-        
         db.session.add(user_obj)
         db.session.commit()
-        
-    return render_template("register.html")
+        flash("Congrats ! You can now login !", "success")
+        return redirect(url_for("FXDXP.login"))
+    
+    return render_template("register.html", hide_navbar=True)

@@ -29,7 +29,16 @@ const pie_chart = new Chart(context, {
             title: {
                 display: true,
                 text: "Spendings"
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let value = context.parsed;
+                        let label = context.label || '';
+                        return ` ${label}: ${value.toLocaleString('en-US')} $`;
+                    }
+                }
             }
         }
     }
-})
+});

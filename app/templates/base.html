@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    {% if hide_navbar != True %}
     <ul class="nav-bar">
         <a href="{{ url_for('FXDXP.dashboard') }}">Dashboard</a>
         <a href="{{ url_for('FXDXP.show_balance') }}">Balance</a>
-        <a>My Profile</a>
     </ul>
+    {% endif %}
     {% block content %}{% endblock %}
 </body>
 </html>

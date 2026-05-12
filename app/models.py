@@ -1,5 +1,5 @@
 from app import db
-
+from flask_login import UserMixin
 class Transaction(db.Model):
     __tablename__ = "transactions"
 
@@ -29,7 +29,7 @@ class Token(db.Model):
         return f"<Token {self.client_user_id}>"
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
