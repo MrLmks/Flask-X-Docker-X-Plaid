@@ -1,7 +1,7 @@
 {% extends "base.html" %}
+{% block content %}
 <a href="{{ url_for('FXDXP.login')}}">Login</a>
 <a href="{{ url_for('FXDXP.register')}}">Register</a>
-{% block content %}
 <div class="auth-container">
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
