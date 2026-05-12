@@ -1,6 +1,3 @@
-Voici le nouveau README.md, prêt à être copié-collé sur GitHub :
-
-
 # Flask × Docker × Plaid 💳
 
 > Application Fintech de finances personnelles, conteneurisée et sécurisée, connectée aux banques via Plaid.  
