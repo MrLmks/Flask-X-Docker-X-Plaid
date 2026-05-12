@@ -1,90 +1,146 @@
-img {
-    max-width: 32px;
-    max-height: 32px;
-    height: auto
+:root {
+    --primary-color: #2d3436;
+    --secondary-color: #7f8c8d;
+    --accent-color: #3498db;
+    --bg-color: #f9f9f9;
+    --card-bg: #ffffff;
 }
 
+body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #2d3436;
+    line-height: 1.6;
+    margin: 0;
+}
 
 h1 {
     text-align: center;
-    text-decoration: underline;
+    font-weight: 300;
+    margin-bottom: 30px;
+    color: var(--primary-color);
 }
 
-
-.total-container {
-    font-size: 25px;
-    font-weight: bold;
-    color: black;
-}
-
-
-.balance-container {
-    display: block;
-    font-size: 14px;
-    text-transform: uppercase;
-    color: #7f8c8d;
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-
-.transaction-card {
-    background-color: rgb(179, 181, 184);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid #f0f0f0;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-}
-
-.alert {
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-button {
-    display: inline-block;
-    padding: 10px 22px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
+img {
+    max-width: 32px;
+    max-height: 32px;
+    height: auto;
+    object-fit: contain;
 }
 
 .auth-container {
     max-width: 400px;
-    margin: 250px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    margin: 80px auto;
+    padding: 40px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auth-container label {
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-top: 10px;
 }
 
 .auth-container input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 12px;
     border: 1px solid #dcdde1;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.auth-container input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+/* --- 4. Boutons --- */
+button, .button {
+    width: 100%;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #485460;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.total-container {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.balance-container {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.transaction-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); 
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.alert-error { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.alert-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+
+.main-page-buttons {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.main-page-buttons a {
+    margin: 0 10px;
+    color: var(--secondary-color);
+    font-size: 0.85em;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.main-page-buttons a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
 }

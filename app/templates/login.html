@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<a href="{{ url_for('FXDXP.login')}}">Login</a>
-<a href="{{ url_for('FXDXP.register')}}">Register</a>
+<div class="main-page-buttons">
+  <a class="button" href="{{ url_for('FXDXP.login')}}">Login</a>
+  <a class="button" href="{{ url_for('FXDXP.register')}}">Register</a>
+</div>
 <div class="auth-container">
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -20,9 +22,6 @@
     <div class="password">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-    </div>
-    <div>
-      <a href="{{ url_for('FXDXP.register') }}">Register</a>
     </div>
     <button type="submit">Send</button>
 </form>
