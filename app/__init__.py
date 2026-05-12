@@ -3,9 +3,11 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_login import LoginManager
 
 
 db = SQLAlchemy()
+login_manager = LoginManager()
 
 
 def get_credentials():
@@ -24,6 +26,8 @@ def create_app():
     DATABASE_URL = f"postgresql+psycopg2://{username}:{password}@db:5432/fxdxp_db"
 
     app=Flask(__name__)
+    login_manager.init_app(app)
+    login_manager.login_view = "FXDXP.login"
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")

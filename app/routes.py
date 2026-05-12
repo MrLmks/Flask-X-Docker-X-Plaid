@@ -5,10 +5,15 @@ from datetime import date
 from sqlalchemy import func, select
 from .utils import mapping_logos
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from app import login_manager
+from flask_login import login_required
+from app.models import User
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @fxdxp.route("/")
 def welcome_message():
@@ -78,6 +83,7 @@ def exchange_public_token():
         return jsonify({"error": str(e)}), 500
 
 @fxdxp.route("/dashboard")
+@login_required
 def dashboard():
     from app.models import Transaction
     from app import db
@@ -123,6 +129,7 @@ def fetch_transaction():
 
 
 @fxdxp.route("/balance", methods=["GET"])
+@login_required
 def show_balance():
     from app.models import Transaction
     from app import db
@@ -192,7 +199,7 @@ def register():
         
         password = request.form.get("password").strip()
         hashed_password = generate_password_hash(password)
-        user_obj = User(username=username, password=hashed_password, email= email)
+        user_obj = User(username=username, password_hash=hashed_password, email= email)
         
         db.session.add(user_obj)
         db.session.commit()
