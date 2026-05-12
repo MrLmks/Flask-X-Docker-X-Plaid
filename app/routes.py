@@ -190,13 +190,25 @@ def register():
         email = request.form.get("email").strip()
         
         if re.match(pattern, email) is None:
-            return jsonify({"Status" : "Error with the email. Try again."})
+            flash("Error with the email. Retry", "error")
+            return redirect(url_for("FXDXP.register"))
         
         username = request.form.get("username").strip()
-        
+        request_email = User.query.filter_by(email=email).first()
+        request_username = User.query.filter_by(username=username).first()
+
+        if request_email is not None:
+            flash("Email already exists. Try login in", "error")
+            return redirect(url_for("FXDXP.login"))
+        print("Verfication email ok")
+        if request_username is not None:
+            flash("Username already exists. Try login in.", "error")
+            return redirect(url_for("FXDXP.login"))
         if username is None:
-            return jsonify({"status": "Error with the username. Try again."})
+            flash("Error with the username. Retry", "error")
+            return redirect(url_for("FXDXP.register"))
         
+
         password = request.form.get("password").strip()
         hashed_password = generate_password_hash(password)
         user_obj = User(username=username, password_hash=hashed_password, email= email)

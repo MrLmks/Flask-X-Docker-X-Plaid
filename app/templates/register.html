@@ -1,6 +1,14 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
 <form action="{{ url_for('FXDXP.register') }}" method="POST">
     <div class="email">
         <label for="email">Email:</label>
