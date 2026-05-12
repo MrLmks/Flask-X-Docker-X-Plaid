@@ -1,33 +1,36 @@
+Voici le nouveau README.md, prêt à être copié-collé sur GitHub :
+
+
 # Flask × Docker × Plaid 💳
 
-> A containerized personal finance tracker that connects to your bank account via the Plaid API, aggregates transactions, and delivers automated spending insights — all deployed on AWS EC2 with TLS encryption.
-
-![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-3.x-black?logo=flask&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
-![Nginx](https://img.shields.io/badge/Nginx-Load%20Balancer-009639?logo=nginx&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+> Application Fintech de finances personnelles, conteneurisée et sécurisée, connectée aux banques via Plaid.  
+> Authentification, dashboard de dépenses, historique et visualisation par catégories.  
+> Développée avec Flask, orchestrée par Docker Compose, prête pour un déploiement AWS EC2.
 
 ---
 
-## Overview
+## Aperçu
 
-This project is a full-stack DevOps portfolio project built to demonstrate real-world skills across application development, containerization, and cloud deployment.
+L'application permet à un utilisateur de **créer un compte**, de se **connecter** de manière sécurisée, puis de **lier sa banque** (via Plaid Link). Ses transactions sont automatiquement agrégées et stockées. Il peut alors consulter :
 
-The application allows users to securely connect their bank account (Revolut, etc.) via **Plaid Link**, retrieve and store their transaction history in **PostgreSQL**, and visualize spending patterns through an interactive dashboard.
+- Un **dashboard** avec un graphique camembert de ses dépenses par catégorie.
+- Une page **Balance** avec le solde total, l'historique complet et les logos des commerçants.
 
-### Key features
+L'interface est sobre, responsive et moderne, construite avec HTML/CSS et Chart.js.
 
-- 🔗 **Bank connection** via Plaid Link (OAuth flow)
-- 📊 **Spending dashboard** with charts by category and over time
-- 🗄️ **PostgreSQL** for transaction persistence
-- 🔒 **Budget alerts** when a spending category exceeds a defined limit
-- 🐳 **Fully containerized** with Docker & Docker Compose
-- ⚖️ **Nginx load balancer** distributing traffic across multiple Flask instances
-- 🌐 **Deployed on AWS EC2** with HTTPS via Let's Encrypt
-- 🔄 **Automatic TLS certificate renewal** via Certbot
+---
+
+## Fonctionnalités
+
+- 🔐 **Authentification complète** : inscription, connexion, déconnexion, mots de passe hachés.
+- 🔗 **Connexion bancaire** via Plaid Link (sandbox ou production).
+- 📊 **Dashboard** : camembert interactif par catégorie, affichant les totaux en dollars.
+- 💰 **Balance** : solde total calculé automatiquement, historique des transactions avec logos.
+- 🐳 **Conteneurisation** : Docker & Docker Compose, avec un mode développement performant.
+- ⚖️ **Nginx** : reverse proxy (round‑robin) en production.
+- 🌐 **AWS EC2 ready** : déploiement avec HTTPS (Let's Encrypt / Certbot).
+- 🛡️ **Sécurité** : Docker secrets, réseau interne isolé, sessions Flask‑Login, clés secrètes.
+- 📈 **Données sandbox** : script SQL de `seed` pour enrichir les catégories de test.
 
 ---
 
@@ -37,185 +40,170 @@ The application allows users to securely connect their bank account (Revolut, et
 Internet
     │
     ▼
-[ Nginx ] ── public network ──────────────────────────
-    │                                                  
-    ├──▶ [ Flask instance 1 ]  ─┐                     
-    ├──▶ [ Flask instance 2 ]  ─┼── private network ──▶ [ PostgreSQL ]
-    └──▶ [ Flask instance 3 ]  ─┘                     
+[ Nginx ] ── réseau public ──────────────────────────
+    │
+    ├──▶ [ Flask instance 1 ]
+    ├──▶ [ Flask instance 2 ]  ── réseau privé ──▶ [ PostgreSQL ]
+    └──▶ [ Flask instance 3 ]
 ```
 
-- **Public network** — only Nginx is exposed to the internet (ports 80 & 443)
-- **Private network** — Flask and PostgreSQL communicate internally, never directly reachable from outside
+- Seul Nginx est exposé (ports 80 & 443).
+- Flask et PostgreSQL communiquent sur un réseau Docker interne, jamais accessible de l'extérieur.
 
 ---
 
-## Tech Stack
+## Stack technique
 
-| Layer | Technology |
-|---|---|
-| Backend | Python 3.12 · Flask |
-| Banking API | Plaid API (sandbox & production) |
-| Frontend | HTML/CSS · Chart.js · Plaid Link JS |
-| Database | PostgreSQL 17 |
-| Containerization | Docker · Docker Compose |
-| Reverse proxy | Nginx (round-robin load balancing) |
-| Cloud | AWS EC2 · Ubuntu Server |
-| Security | Let's Encrypt · TLS · Docker secrets |
-| Version control | Git · GitHub |
+| Couche            | Technologie                               |
+| ----------------- | ----------------------------------------- |
+| Backend           | Python 3.12 · Flask                       |
+| Banking API       | Plaid API (sandbox & production)          |
+| Authentification  | Flask-Login · Werkzeug (hashage)          |
+| Frontend          | HTML5 · CSS3 · Chart.js · Plaid Link JS   |
+| Base de données   | PostgreSQL 17                             |
+| Conteneurisation  | Docker · Docker Compose · Watch (dev)     |
+| Reverse proxy     | Nginx (round‑robin load balancing)        |
+| Cloud             | AWS EC2 · Ubuntu · Let's Encrypt · Certbot|
+| Versionning       | Git · GitHub                              |
 
 ---
 
-## Project Structure
+## Structure du projet
 
 ```
 Flask-X-Docker-X-Plaid/
 ├── app/
-│   ├── templates/          # HTML templates (Jinja2)
-│   ├── static/             # CSS, JS, Chart.js assets
-│   ├── __init__.py         # Flask app factory
-│   ├── routes.py           # Application routes
-│   ├── models.py           # Database models
-│   └── plaid_client.py     # Plaid API integration
+│   ├── static/
+│   │   ├── css/style.css
+│   │   └── js/
+│   │       ├── dashboard-graph.js
+│   │       └── plaid-connect.js
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── dashboard.html
+│   │   ├── balance.html
+│   │   ├── login.html
+│   │   └── register.html
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   ├── plaid_client.py
+│   └── utils.py
 ├── nginx/
-│   └── nginx.conf          # Nginx load balancer config
+│   └── nginx.conf
 ├── postgres/
-│   └── init.sql            # Database initialization script
-├── secrets/                # ⚠️ Local only — never committed to Git
-│   ├── db_user             # PostgreSQL username
-│   ├── db_password         # PostgreSQL password
-│   └── db_password.example # Example file showing expected format
-├── Dockerfile              # Production image
-├── Dockerfile.dev          # Development image (hot-reload)
-├── docker-compose.yml      # Production orchestration
-├── docker-compose.dev.yml  # Local development orchestration
-├── .env.example            # Environment variables template
-├── .gitignore
+│   ├── init.sql
+│   └── seed.sql
+├── secrets/                  # ⚠️ local uniquement
+│   ├── db_user
+│   ├── db_password
+│   └── db_password.example
+├── docker-compose.yml        # Production
+├── docker-compose.dev.yml    # Développement (Watch)
+├── Dockerfile
+├── Dockerfile.dev
+├── .env.example
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Getting Started
+## Démarrage rapide
 
-### Prerequisites
+### Prérequis
 
-- [Docker](https://docs.docker.com/get-docker/) & Docker Compose
-- A free [Plaid developer account](https://dashboard.plaid.com/signup) (sandbox is free, no real bank data needed)
+- Docker & Docker Compose
+- Un compte développeur Plaid (gratuit, sandbox)
 - Git
 
-### 1. Clone the repository
+### 1. Cloner le dépôt
 
 ```bash
 git clone https://github.com/MrLmks/Flask-X-Docker-X-Plaid.git
 cd Flask-X-Docker-X-Plaid
 ```
 
-### 2. Set up environment variables
+### 2. Fichier d'environnement
 
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill in your values:
+Remplissez vos clés Plaid et votre `FLASK_SECRET_KEY` dans le `.env`.
 
-```env
-# Flask
-FLASK_SECRET_KEY=your_random_secret_key
-
-# Plaid
-PLAID_CLIENT_ID=your_plaid_client_id
-PLAID_SECRET=your_plaid_sandbox_secret
-PLAID_ENV=sandbox
-
-# Database
-POSTGRES_DB=fxdxp-db
-```
-
-> ⚠️ Never commit your `.env` file. It is already listed in `.gitignore`.
-
-### 3. Set up Docker secrets
-
-Sensitive credentials (database username and password) are managed via **Docker Compose secrets** — they are injected into containers at runtime via in-memory files and never exposed as environment variables.
+### 3. Secrets Docker (base de données)
 
 ```bash
 mkdir -p secrets
-echo "your_db_username" > secrets/db_user
-echo "your_db_password" > secrets/db_password
+echo "votre_utilisateur" > secrets/db_user
+echo "votre_mot_de_passe" > secrets/db_password
 ```
 
-> ⚠️ The `secrets/` folder is listed in `.gitignore` and will never be committed to Git.  
-> See `secrets/db_password.example` for the expected file format.
+> Les dossiers `secrets/` et `.env` sont déjà dans `.gitignore`. Ils ne seront jamais versionnés.
 
-### 4. Run locally (development mode)
+### 4. Lancer l'application (développement)
 
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-The app will be available at `http://localhost:5000` with hot-reload enabled — any change to the Python files restarts Flask automatically, no rebuild needed.
+Ouvrez `http://localhost:5001`.
 
-### 5. Run in production mode (local)
+### 5. Créer un compte et lier une banque
+
+- Allez sur `/register` pour créer un utilisateur.
+- Connectez‑vous.
+- Sur le Dashboard, cliquez sur « Connect To Your Bank » pour ouvrir Plaid Link (utilisez les identifiants sandbox : `user_good` / `pass_good`).
+- Lancez l'import des transactions :
 
 ```bash
-docker compose up --build
+curl http://localhost:5001/api/fetch_transaction
 ```
 
-The full stack starts in the correct order:
-1. PostgreSQL starts and becomes healthy
-2. Flask starts once PostgreSQL is ready
-3. Nginx starts once Flask is healthy and begins load balancing
+### 6. (Optionnel) Enrichir les catégories
 
-Access the app at `http://localhost`.
+```bash
+docker compose -f docker-compose.dev.yml exec -T db psql -U admin -d fxdxp_db < postgres/seed.sql
+```
 
----
-
-## Deployment (AWS EC2)
-
-> 🚧 Work in progress — deployment guide will be added upon completion of Phase 3.
-
-High-level steps:
-1. SSH into your EC2 Ubuntu instance
-2. Install Docker & Docker Compose
-3. Clone this repo
-4. Create `.env` and `secrets/` with your production values
-5. Run `docker compose up -d`
-6. Point your domain to the EC2 public IP
-7. Obtain a TLS certificate via Certbot / Let's Encrypt
-8. Nginx handles HTTPS termination and redirects HTTP → HTTPS
+Rechargez le dashboard, le camembert affichera des catégories variées.
 
 ---
 
 ## Roadmap
 
-- [x] Repository setup & project structure
-- [x] Flask app — base routes & healthcheck endpoint
-- [x] Docker — Dockerfile (prod & dev), hot-reload dev environment
-- [x] Docker Compose — full stack with PostgreSQL, Nginx, virtual networks, healthchecks & secrets
-- [ ] Flask app — Plaid Link integration & transaction routes
-- [ ] PostgreSQL — transaction storage & models
-- [ ] Nginx — load balancer with multiple Flask instances
-- [ ] AWS EC2 — deployment & HTTPS with Let's Encrypt
-- [ ] Automatic TLS certificate renewal
+- ✅ Authentification (register, login, logout, sessions)
+- ✅ Dashboard avec camembert
+- ✅ Page Balance (solde + historique + logos)
+- ✅ Import des transactions Plaid
+- ✅ Script de `seed` pour les données sandbox
+- ✅ Mode développement avec Docker Compose Watch
+- ✅ Architecture Nginx + réseaux isolés
+- 🔜 Déploiement AWS EC2 & HTTPS (Let's Encrypt)
+- 🔜 Renouvellement automatique des certificats TLS
+- 🔜 Tests unitaires et d'intégration
 
 ---
 
-## Security
+## Sécurité
 
-- **Docker Compose secrets** — database credentials are injected at runtime via `/run/secrets/`, never stored in environment variables or committed to Git
-- **Network isolation** — Flask and PostgreSQL live on a private internal Docker network, unreachable from the internet
-- **Nginx as the only entry point** — only ports 80 and 443 are exposed publicly
-- **TLS encryption** — all production traffic is encrypted via Let's Encrypt
-- **`.gitignore`** — `.env` and `secrets/` are excluded from version control
-
----
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+- **Docker secrets** : les credentials de la base de données sont injectés via `/run/secrets/`, jamais dans les variables d'environnement.
+- **Isolation réseau** : Flask et PostgreSQL vivent sur un réseau Docker interne, inaccessibles depuis l'extérieur.
+- **Nginx** : seul point d'entrée public (ports 80/443).
+- **TLS** : chiffrement de tout le trafic en production via Let's Encrypt.
+- **Mots de passe** : hashés avec `scrypt` (Werkzeug).
+- **`.gitignore`** : `.env` et `secrets/` exclus du versionnement.
 
 ---
 
-## Author
+## Licence
 
-**Raphael** — [@MrLmks](https://github.com/MrLmks)  
+Ce projet est sous licence MIT – voir le fichier [LICENSE](LICENSE).
+
+---
+
+## Auteur
+
+**Raphael** – [@MrLmks](https://github.com/MrLmks)
 DevOps Enthusiast · Building in public
