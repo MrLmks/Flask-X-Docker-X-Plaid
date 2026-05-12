@@ -6,27 +6,28 @@ from sqlalchemy import func, select
 from .utils import mapping_logos
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import login_manager
-from flask_login import login_required, login_user
+from flask_login import login_required, login_user, logout_user
 from app.models import User
 
 fxdxp = Blueprint("FXDXP", __name__, template_folder="templates")
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+@fxdxp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Disconnected !", "success")
+    return redirect(url_for("FXDXP.login"))
+
+
 @fxdxp.route("/")
-def welcome_message():
-    return "Welcome to FXDXP"
-
-@fxdxp.route("/about", methods=["GET"])
-def json_message():
-    return jsonify(message={"status":"ok"})
-
-@fxdxp.route("/health")
-def health_check():
-    return {"status": "ok"}, 200
-
+def go_to_login():
+    return redirect(url_for("FXDXP.login"))
 
 def get_json_or_400():
     data = request.get_json()
@@ -168,6 +169,9 @@ def login():
             session["user_id"] = request_username.id
             login_user(request_username)
             return redirect(url_for("FXDXP.dashboard"))
+        else:
+            flash("Username or password incorrect.", "error")
+            return redirect(url_for("FXDXP.login"))
         
     return render_template("login.html", hide_navbar=True)
 
